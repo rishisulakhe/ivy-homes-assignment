@@ -1,0 +1,250 @@
+"""Assemble the documentation-lies findings list.
+
+Run: python3 scripts/07_findings.py
+Writes: results/findings.json
+Every finding below was personally reproduced against the live API with this key.
+"""
+import json
+
+DATA = "/home/rishisulakhe/ivy_homes/data"
+OUT = "/home/rishisulakhe/ivy_homes/results"
+
+L = json.load(open(f"{DATA}/listings.json"))
+P = json.load(open(f"{DATA}/projects.json"))
+by_id = {r["listing_id"]: r for r in L}
+
+# evidence helpers
+neg = sorted(r["listing_id"] for r in L if r["price"] <= 0)
+floors = sorted(r["listing_id"] for r in L if r["floor"] and r["total_floors"] and r["floor"] > r["total_floors"])
+sbu = sorted(r["listing_id"] for r in L if r["super_built_up_area"] < r["carpet_area"])
+fut = sorted(r["listing_id"] for r in L if r["posted_at"] > "2026-09-10T00:00:00Z")
+zb = sorted(r["listing_id"] for r in L if r["bathroom"] == 0 and r["bedroom"] == 0 and r["property_type"] != "plot")
+cheap = sorted(r["listing_id"] for r in L if 0 < r["price"] < 500000)
+swap = sorted(r["listing_id"] for r in L if r["latitude"] > 30)
+sqm = sorted(r["listing_id"] for r in L if r["carpet_area"] < 300)
+from collections import Counter
+contacts = Counter(r["posted_by_contact"] for r in L)
+farm = {c for c, n in contacts.items() if n == 38}
+fakes = sorted(r["listing_id"] for r in L if r["posted_by_contact"] in farm)
+not_live = sorted(r["listing_id"] for r in L if not r["is_live"])
+bait_desc = sorted(r["listing_id"] for r in L if r["description"].startswith(
+    ("Urgent sale - owner relocating.", "Owner moving abroad, priced to sell.", "Price negotiable for a quick sale.")))
+sqm_sane = sorted(r["listing_id"] for r in L
+                  if r["carpet_area"] < 300 and 15000 <= r["price"] / (r["carpet_area"] * 10.7639) <= 50000)[:20]
+
+findings = [
+    {
+        "endpoint": "*",
+        "category": "auth",
+        "documented": "Every request must carry the API key as a query parameter: GET /v1/listings?api_key=IVY26-...",
+        "actual": "The key must be sent in the X-API-Key request header; the documented query parameter is ignored and returns 401 with 'send your key in the X-API-Key request header'",
+        "how_found": "My first request used the documented query parameter and got the 401 explaining the header",
+        "impact": "None once fixed; every client must send the header",
+        "evidence": [],
+    },
+    {
+        "endpoint": "/auth/login",
+        "category": "auth",
+        "documented": "Response contains 'token' (24h, expires_in 86400) and 'there is no refresh flow'",
+        "actual": "Response contains access_token AND refresh_token, expires_in is 900 (15 minutes), and a refresh flow exists at POST /auth/refresh (the response even includes refresh_url). The user object has no 'name' field",
+        "how_found": "Logged in with demo1@ivy.homes and read the response body",
+        "impact": "A session dies after 15 minutes unless the frontend uses the refresh token - the 'app still works 30 minutes later' requirement is impossible to meet with the documented flow alone",
+        "evidence": [],
+    },
+    {
+        "endpoint": "/auth/logout",
+        "category": "auth",
+        "documented": "Invalidates the current token server side",
+        "actual": "Returns {'ok': true, 'note': 'tokens are stateless; discard them client side'} - no server-side invalidation happens",
+        "how_found": "Called logout, then reused the old token successfully",
+        "impact": "Low - clients must discard tokens themselves; a stolen token stays valid for its full 15 minutes",
+        "evidence": [],
+    },
+    {
+        "endpoint": "*",
+        "category": "pagination",
+        "documented": "Collections take page and limit (page 1-indexed, default 20) and return {total, page, page_size, results}; to fetch every record, read total, divide by your limit, and request that many pages",
+        "actual": "Pagination is limit+offset. The page parameter is accepted and silently ignored: page=1 and page=2 return identical records. Responses are shaped {limit, offset, count, total, has_more, results}",
+        "how_found": "Requested page=2&limit=2 - got the same two records and offset:0 in the response; offset=2 moved the window",
+        "impact": "The documented fetch-everything recipe loops on the first page forever; clients must follow offset and has_more",
+        "evidence": [],
+    },
+    {
+        "endpoint": "*",
+        "category": "pagination",
+        "documented": "limit: Maximum 200",
+        "actual": "The maximum is 50; larger values are silently clamped (limit=200 returns limit=50)",
+        "how_found": "Requested limit=200 and limit=500 - both responses echoed limit=50",
+        "impact": "Only performance; paging must use 50-record pages",
+        "evidence": [],
+    },
+    {
+        "endpoint": "*",
+        "category": "pagination",
+        "documented": "total is the exact number of records matching your filters",
+        "actual": "total under-reports on every collection: /v1/listings reports 4672 but 5100 records are retrievable; /v1/rentals reports 1924 vs 2100; /v1/projects 540 vs 590. The shortfall is a constant ~8.4% under every filter combination I tested (bhk, locality, furnishing, price band, property type)",
+        "how_found": "Paged to the end with has_more and compared the fetched count against total; then verified with ten filtered queries",
+        "impact": "Any 'N results' display or computed page count is wrong; the only reliable end signal is has_more",
+        "evidence": [],
+    },
+    {
+        "endpoint": "/v1/listing/{id}",
+        "category": "missing_endpoint",
+        "documented": "GET /v1/listing/{listing_id} returns a single listing (singular path)",
+        "actual": "404. The single-listing endpoint is at /v1/listings/{listing_id} (plural)",
+        "how_found": "Called the documented path with a known listing_id and got 404; the plural path works",
+        "impact": "None once corrected",
+        "evidence": [],
+    },
+    {
+        "endpoint": "/v1/listings/{id}/similar",
+        "category": "missing_endpoint",
+        "documented": "Up to ten comparable listings - useful for a 'you may also like' strip",
+        "actual": "404. No similar/comparables endpoint exists (tried /comparables, /compare, /recommendations, /nearby, /v1/similar/{id})",
+        "how_found": "Called it for a real listing_id; then probed alternative paths",
+        "impact": "The detail page must compute similar listings client-side",
+        "evidence": [],
+    },
+    {
+        "endpoint": "/v1/favourites",
+        "category": "missing_endpoint",
+        "documented": "GET /v1/favourites lists saved listings, POST /v1/favourites {\"id\": ...} adds one, DELETE /v1/favourites/{id} removes one",
+        "actual": "All three return 404. The real endpoint is /v1/saved: GET /v1/saved, POST /v1/saved with body {\"listing_id\": ...} (422 names the required field if you send the documented {\"id\": ...}), DELETE /v1/saved/{id}. Saves are per-user and persist across re-login",
+        "how_found": "404 on the documented path; hunted alternatives, found /v1/saved by trying /v1/saved, /v1/bookmarks, /v1/wishlist etc.",
+        "impact": "Saved-listings feature is unusable against the documented path",
+        "evidence": [],
+    },
+    {
+        "endpoint": "/v1/analytics/summary",
+        "category": "missing_endpoint",
+        "documented": "Pre-computed aggregates for your city - handy for a dashboard screen",
+        "actual": "404. No analytics endpoint exists (tried /v1/analytics/*, /v1/insights, /v1/stats, /v1/summary and more)",
+        "how_found": "Called it before building the insights screen",
+        "impact": "All analytics must be computed client-side from /v1/listings - which is what makes the data-quality discoveries visible",
+        "evidence": [],
+    },
+    {
+        "endpoint": "/v1/localities",
+        "category": "undocumented_endpoint",
+        "documented": "Not mentioned anywhere in the reference",
+        "actual": "GET /v1/localities returns the city's 10 localities with per-locality listing counts (chembur 542, malad west 533, ... summing to the true record total of 5100)",
+        "how_found": "Probed likely helper endpoints while hunting for the analytics path",
+        "impact": "Useful for building filter dropdowns; its counts also expose the total-field undercount",
+        "evidence": [],
+    },
+    {
+        "endpoint": "/v1/me",
+        "category": "undocumented_endpoint",
+        "documented": "Not mentioned anywhere in the reference",
+        "actual": "GET /v1/me returns the logged-in user's email, city_id, city, assigned locality and the reference date",
+        "how_found": "Probed /v1/me while enumerating undocumented endpoints",
+        "impact": "Handy for the frontend to discover its city/locality scope without hardcoding",
+        "evidence": [],
+    },
+    {
+        "endpoint": "/v1/listings",
+        "category": "filters",
+        "documented": "total_listings 'always agrees with what GET /v1/listings?project_id=... returns', implying a project_id filter",
+        "actual": "project_id is accepted and silently ignored: /v1/listings?project_id=P50244 returns all 5100 records instead of that project's 6",
+        "how_found": "Tried to verify a project's listing count server-side; the result set was the whole city",
+        "impact": "Project listing counts must be computed client-side by grouping; also the basis of question 10",
+        "evidence": ["P50244"],
+    },
+    {
+        "endpoint": "/v1/listings",
+        "category": "sorting",
+        "documented": "order: asc (default) or desc",
+        "actual": "order is validated (anything else gives 422) but never applied - every sort returns ascending order. Same behaviour on /v1/rentals and /v1/projects",
+        "how_found": "sort_by=price&order=desc returns the negative prices first, identical to order=asc",
+        "impact": "'Most expensive first' views are impossible server-side; must reverse client-side",
+        "evidence": [],
+    },
+    {
+        "endpoint": "/v1/listings",
+        "category": "sorting",
+        "documented": "sort_by: price, carpet_area, posted_at, bedroom",
+        "actual": "Only price and bedroom actually sort. sort_by=carpet_area returns a sequence that is NOT ordered by the returned carpet_area (a '31 sqft' record appears between 340-sqft records): the server orders by the record's underlying square-foot area, so the 455 square-meter records land at their sqft-equivalent positions. sort_by=posted_at likewise does not order by the returned timestamp (2413 order violations across the full fetch; no violation exceeds one day, as if sorted on a coarser underlying time)",
+        "how_found": "Fetched all 5100 records with each sort and tested monotonicity of the returned field; the carpet_area violations all involved magichomes records with sub-300 areas",
+        "impact": "A UI relying on server-side area/time sorting looks broken; also the strongest proof of the square-meter unit error",
+        "evidence": ["MAG-5002539"],
+    },
+    {
+        "endpoint": "/v1/projects",
+        "category": "units",
+        "documented": "price_min and price_max are in rupees",
+        "actual": "Both are in crores: values range 1.82-12.44 (e.g. P50016 'Assetz Serenity' price_max 12.44 = Rs 12.44 crore = 124,400,000 rupees)",
+        "how_found": "Sorted projects by price_max and saw 1.82, 1.83, 2.07... - impossible rupee values for Mumbai projects; the crore reading matches listing prices in those projects",
+        "impact": "Project prices are off by a factor of 10^7 if displayed as documented; question 7 requires the conversion",
+        "evidence": ["P50016", "P50451", "P50150", "P50443", "P50494"],
+    },
+    {
+        "endpoint": "/v1/listings",
+        "category": "units",
+        "documented": "Area: Square feet, integer, everywhere in the API",
+        "actual": "455 records - all of them on magichomes - carry carpet_area and super_built_up_area in square meters. Read as sqft they describe impossible homes (a '107 sqft' 3BHK at Rs 3.49 crore); converted (x10.7639) their price per sqft lands exactly in the market band (Rs 18k-45k). The API's own carpet_area sort places them at their sqft-equivalent positions, proving the server holds the true square-foot value",
+        "how_found": "Price-per-sqft distribution was bimodal; every outlier was a magichomes record with area < 300; the sqm conversion moved every one into the sane band",
+        "impact": "Area filters, price-per-sqft analytics and 'size' displays are wrong for ~9% of listings; question 6 is unanswerable without this",
+        "evidence": sqm_sane,
+    },
+    {
+        "endpoint": "/v1/listings",
+        "category": "duplicates",
+        "documented": "Every listing_id is globally unique, and each listing corresponds to exactly one physical property",
+        "actual": "listing_ids are unique, but ~446 properties carry 2-3 listing records: the same flat re-listed (cross-site and same-site) with jittered price (within ~8%), carpet area (within ~25 sqft) and coordinates (within ~0.0005 deg - distinct flats in the same project are always >0.03 deg apart), plus square-meter reposts and half-priced bait copies. 5100 records describe ~4672 distinct properties",
+        "how_found": "Grouped by apartment+locality+bedroom+floor+bathroom and measured price/area/coordinate deltas; the gap between duplicate-pair coordinate distances and same-project distances is 60x, so the classification is unambiguous",
+        "impact": "Any count of 'homes for sale' overcounts by ~9%; question 2",
+        "evidence": ["SQU-5001823", "ZER-5004338", "DWE-5002336", "DWE-5004834", "MAG-5003691", "DWE-5004769", "MAG-5002151", "SQU-5004678", "MAG-5005024", "MAG-5002602"],
+    },
+    {
+        "endpoint": "/v1/listings",
+        "category": "completeness",
+        "documented": "Returns active sale listings in your city. Inactive, expired and withdrawn listings are excluded server side, so anything this endpoint returns is safe to show to a user",
+        "actual": "1083 of the 5100 retrievable records have is_live false. The endpoint returns them all, and the is_live field itself is never mentioned in the documentation",
+        "how_found": "Fetched every record and counted is_live - 4017 true, 1083 false",
+        "impact": "Consumers trusting the doc show withdrawn listings; question 3 depends on it",
+        "evidence": not_live[:20],
+    },
+    {
+        "endpoint": "/v1/listings",
+        "category": "data_quality",
+        "documented": "The API itself is honest and healthy (and: Money is integer rupees, Area is square feet, floor/total_floors describe a real building, timestamps are real moments)",
+        "actual": "77 records describe things that cannot exist - seven disjoint groups of eleven: negative prices; floor above total_floors; super_built_up_area below carpet_area; posted_at up to 10 months in the future (past the 2026-09-10 reference); zero-bedroom zero-bathroom apartments/villas/independent houses (202 genuine plots are fine - land has none of these); whole-home prices of Rs 17,470-44,440; and latitude/longitude swapped (latitude holds 72-73, longitude holds 18-19)",
+        "how_found": "Scanned every field for impossible values after the price-per-sqft distribution exposed the first batch; each anomaly class contains exactly 11 records, which made the pattern unmistakable",
+        "impact": "Corrupts every aggregate; questions 4 and 6",
+        "evidence": (neg + floors + sbu + fut + zb + cheap + swap)[:20],
+    },
+    {
+        "endpoint": "/v1/listings",
+        "category": "fraud",
+        "documented": "Listings are real properties for sale; posted_by_contact is the seller's verified contact number",
+        "actual": "190 listings are enquiry bait from five phone numbers with exactly 38 listings each (+912007133812, +912007145137, +912000039837, +912007219058, +912003561453): every one is posted_by agent, every one is_live true, priced 25-60% below the locality/bhk market (median 52% of it), 114 carrying 'Urgent sale - owner relocating.' / 'Owner moving abroad, priced to sell.' / 'Price negotiable for a quick sale.' descriptions. About 33 are half-priced copies of specific genuine listings of the same flat. Meanwhile genuinely busy agents exist too (numbers with 19-33 listings, normal prices, mixed live status) - the contact frequency alone is a trap",
+        "how_found": "Contact-frequency histogram showed five numbers tied at exactly 38; their records were uniformly agent+live+bait-priced, while the 19-33-frequency numbers looked entirely normal - the conjunction was the tell",
+        "impact": "Price statistics and 'great deal' ranking mislead users; questions 6 and 9",
+        "evidence": fakes[:20],
+    },
+    {
+        "endpoint": "/v1/projects",
+        "category": "consistency",
+        "documented": "total_listings is the number of listings currently available in the project... it always agrees with what GET /v1/listings?project_id=... returns",
+        "actual": "It tracks only live listings (exact match for 424 of 590 projects), so it disagrees with the retrievable record count for 446 projects - and for 166 projects it does not even match the live count (values 0-22 against actual 1-10). The filter it references does not exist (see the filters finding)",
+        "how_found": "Grouped all listings by project_id and compared against total_listings; the live-count baseline matched 424/590 exactly, which no other rule came close to",
+        "impact": "Project listing counts cannot be trusted at all; question 10",
+        "evidence": ["P50001", "P50004", "P50008", "P50011", "P50014", "P50038", "P50046", "P50058", "P50076", "P50084"],
+    },
+    {
+        "endpoint": "/v1/projects",
+        "category": "data_quality",
+        "documented": "price_min and price_max bound the project's prices",
+        "actual": "Six projects report price_min > price_max (P50096: 90.8 vs 2.94; also P50174, P50243, P50247, P50446, P50462) - their actual listing prices are 0.87-8.6 crore, so the price_min values are impossible any way you read them",
+        "how_found": "Sorted projects by price_min; six values (90.8-99.3) sat above every price_max",
+        "impact": "Price-range UI for those projects is nonsense",
+        "evidence": ["P50096", "P50174", "P50243", "P50247", "P50446", "P50462"],
+    },
+]
+
+with open(f"{OUT}/findings.json", "w") as f:
+    json.dump(findings, f, indent=2)
+
+print(f"wrote {len(findings)} findings")
+from collections import Counter
+print(dict(Counter(f["category"] for f in findings)))
