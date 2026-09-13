@@ -1,0 +1,181 @@
+[
+  {
+    "what": "favourites",
+    "path": "/v1/favorites",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "favourites",
+    "path": "/v1/favourite",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "favourites",
+    "path": "/v1/favorites/list",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "favourites",
+    "path": "/v1/saved",
+    "method": "GET",
+    "status": 200,
+    "resp": {
+      "count": 0,
+      "results": []
+    }
+  },
+  {
+    "what": "similar listings",
+    "path": "/v1/listings/SQU-5004678/comparables",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "similar listings",
+    "path": "/v1/listings/SQU-5004678/compare",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "similar listings",
+    "path": "/v1/listings/SQU-5004678/recommendations",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "similar listings",
+    "path": "/v1/listings/SQU-5004678/nearby",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "similar listings",
+    "path": "/v1/similar/SQU-5004678",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "analytics",
+    "path": "/v1/analytics/overview",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "analytics",
+    "path": "/v1/analytics/city",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "analytics",
+    "path": "/v1/analytics/market",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "analytics",
+    "path": "/v1/analytics/summary/",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "analytics",
+    "path": "/v1/analytics/insights",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "analytics",
+    "path": "/v1/insights",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "analytics",
+    "path": "/v1/stats",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "analytics",
+    "path": "/v1/summary",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "analytics",
+    "path": "/v1/analytics/dashboard",
+    "method": "GET",
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "what": "city info",
+    "path": "/v1/me",
+    "method": "GET",
+    "status": 200,
+    "resp": {
+      "user": {
+        "email": "demo1@ivy.homes"
+      },
+      "city_id": 5,
+      "city": "mumbai",
+      "assigned_locality": "malad west",
+      "reference_date": "2026-09-10T00:00:00+05:30",
+      "note": "your key is scoped to this city; every endpoint is filtered to it"
+    }
+  }
+]

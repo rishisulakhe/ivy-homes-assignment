@@ -1,0 +1,210 @@
+[
+  {
+    "probe": "GET /v1/listing/{id} (doc: singular path)",
+    "ok": false,
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "probe": "GET /v1/listings/{id}",
+    "ok": true,
+    "result": {
+      "listing_id": "SQU-5004678",
+      "listing_url": "https://www.squarelane.com/property/5004678",
+      "website": "squarelane",
+      "city_id": 5,
+      "apartment_name": "assetz park",
+      "locality": "kandivali east",
+      "property_type": "apartment",
+      "bedroom": 3,
+      "bathroom": 2,
+      "balcony": 1,
+      "floor": 8,
+      "total_floors": 16,
+      "furnishing": "fully-furnished",
+      "facing_direction": "east",
+      "covered_parking": 2,
+      "price": 41740000,
+      "carpet_area": 1078,
+      "super_built_up_area": 1365,
+      "latitude": 19.10602,
+      "longitude": 73.0145,
+      "posted_by": "agent",
+      "posted_by_name": "Shreya Rao",
+      "posted_by_contact": "+912000774713",
+      "project_id": "P50244",
+      "is_verified": true,
+      "description": "Well maintained 3 BHK apartment in assetz park, Kandivali East. Fully-furnished, east-facing. Modular kitchen; covered parking.",
+      "posted_at": "2026-06-21T11:10:00Z",
+      "is_live": true
+    }
+  },
+  {
+    "probe": "GET /v1/listings/{id}/similar",
+    "ok": false,
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "probe": "GET /v1/rentals (limit 2)",
+    "ok": true,
+    "result": {
+      "limit": 2,
+      "offset": 0,
+      "count": 2,
+      "total": 1924,
+      "has_more": true
+    }
+  },
+  {
+    "probe": "GET /v1/rentals/{id} (need real id first)",
+    "ok": false,
+    "status": 404,
+    "detail": {
+      "detail": "no such rental in your city"
+    }
+  },
+  {
+    "probe": "GET /v1/projects (limit 2)",
+    "ok": true,
+    "result": {
+      "limit": 2,
+      "offset": 0,
+      "count": 2,
+      "total": 540,
+      "has_more": true
+    }
+  },
+  {
+    "probe": "GET /v1/projects/P50244",
+    "ok": true,
+    "result": {
+      "project_id": "P50244",
+      "project_url": "https://www.ivy.homes/projects/50244",
+      "city_id": 5,
+      "apartment_name": "Century Sanctuary",
+      "developer_name": "Century",
+      "locality": "kandivali east",
+      "project_status": "ready to move",
+      "total_units": 1099,
+      "total_towers": 18,
+      "total_floors": 20,
+      "launch_date": "2020-05-17",
+      "possession_date": "2026-02-11",
+      "rera_number": "PRM/KA/RERA/7230/979",
+      "min_area_sqft": 908,
+      "max_area_sqft": 1448,
+      "amenities": [
+        "spa",
+        "jogging track",
+        "amphitheatre",
+        "co-working"
+      ],
+      "latitude": 18.93998,
+      "longitude": 72.98791,
+      "total_listings": 0,
+      "price_min": 1.97,
+      "price_max": 3.79
+    }
+  },
+  {
+    "probe": "GET /v1/favourites",
+    "ok": false,
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "probe": "GET /v1/analytics/summary",
+    "ok": false,
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "probe": "POST /auth/logout then re-login",
+    "ok": true,
+    "result": [
+      200,
+      {
+        "ok": true,
+        "note": "tokens are stateless; discard them client side"
+      }
+    ]
+  },
+  {
+    "probe": "GET /v1/analytics (bare)",
+    "ok": false,
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "probe": "GET /v1/city",
+    "ok": false,
+    "status": 404,
+    "detail": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "probe": "GET /v1/localities",
+    "ok": true,
+    "result": {
+      "city": "mumbai",
+      "count": 10,
+      "results": [
+        {
+          "locality": "chembur",
+          "listing_count": 542
+        },
+        {
+          "locality": "malad west",
+          "listing_count": 533
+        },
+        {
+          "locality": "goregaon east",
+          "listing_count": 532
+        },
+        {
+          "locality": "andheri west",
+          "listing_count": 513
+        },
+        {
+          "locality": "kandivali east",
+          "listing_count": 512
+        },
+        {
+          "locality": "bandra east",
+          "listing_count": 505
+        },
+        {
+          "locality": "borivali west",
+          "listing_count": 496
+        },
+        {
+          "locality": "mulund west",
+          "listing_count": 493
+        },
+        {
+          "locality": "thane west",
+          "listing_count": 490
+        },
+        {
+          "locality": "powai",
+          "listing_count": 484
+        }
+      ]
+    }
+  },
+  {
+    "note": "re-logged in after logout probe"
+  }
+]
