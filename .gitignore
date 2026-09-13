@@ -1,0 +1,6 @@
+# session credentials (short-lived) - the API key itself is in submission.json by requirement
+data/.token
+data/login_state.json
+data/login_response.json
+__pycache__/
+*.pyc
