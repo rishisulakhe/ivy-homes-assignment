@@ -1,0 +1,244 @@
+[
+  {
+    "label": "locality=malad west",
+    "params": {
+      "locality": "malad west"
+    },
+    "api_count": 533,
+    "total_reported": 488,
+    "violations": [],
+    "violation_count": 0,
+    "local_count": 533,
+    "api_minus_local": [],
+    "local_minus_api": []
+  },
+  {
+    "label": "locality=Malad West (mixed case)",
+    "params": {
+      "locality": "Malad West"
+    },
+    "api_count": 533,
+    "total_reported": 488,
+    "violations": [],
+    "violation_count": 0,
+    "local_count": 533,
+    "api_minus_local": [],
+    "local_minus_api": []
+  },
+  {
+    "label": "bhk=2",
+    "params": {
+      "bhk": 2
+    },
+    "api_count": 1671,
+    "total_reported": 1531,
+    "violations": [],
+    "violation_count": 0,
+    "local_count": 1671,
+    "api_minus_local": [],
+    "local_minus_api": []
+  },
+  {
+    "label": "property_type=villa",
+    "params": {
+      "property_type": "villa"
+    },
+    "api_count": 397,
+    "total_reported": 364,
+    "violations": [],
+    "violation_count": 0,
+    "local_count": 397,
+    "api_minus_local": [],
+    "local_minus_api": []
+  },
+  {
+    "label": "min_price=30000000",
+    "params": {
+      "min_price": 30000000
+    },
+    "api_count": 3030,
+    "total_reported": 2776,
+    "violations": [],
+    "violation_count": 0,
+    "local_count": 3030,
+    "api_minus_local": [],
+    "local_minus_api": []
+  },
+  {
+    "label": "max_price=20000000",
+    "params": {
+      "max_price": 20000000
+    },
+    "api_count": 762,
+    "total_reported": 698,
+    "violations": [],
+    "violation_count": 0,
+    "local_count": 762,
+    "api_minus_local": [],
+    "local_minus_api": []
+  },
+  {
+    "label": "min_price+max_price band",
+    "params": {
+      "min_price": 20000000,
+      "max_price": 30000000
+    },
+    "api_count": 1308,
+    "total_reported": 1198,
+    "violations": [],
+    "violation_count": 0,
+    "local_count": 1308,
+    "api_minus_local": [],
+    "local_minus_api": []
+  },
+  {
+    "label": "furnishing=fully-furnished",
+    "params": {
+      "furnishing": "fully-furnished"
+    },
+    "api_count": 1644,
+    "total_reported": 1506,
+    "violations": [],
+    "violation_count": 0,
+    "local_count": 1644,
+    "api_minus_local": [],
+    "local_minus_api": []
+  },
+  {
+    "label": "furnishing=semi-furnished",
+    "params": {
+      "furnishing": "semi-furnished"
+    },
+    "api_count": 1735,
+    "total_reported": 1589,
+    "violations": [],
+    "violation_count": 0,
+    "local_count": 1735,
+    "api_minus_local": [],
+    "local_minus_api": []
+  },
+  {
+    "label": "project_id=P50244 (doc: /v1/listings?project_id=)",
+    "params": {
+      "project_id": "P50244"
+    },
+    "api_count": 5100,
+    "total_reported": 4672,
+    "violations": [
+      "100-5003908",
+      "DWE-5004326",
+      "DWE-5003014",
+      "SQU-5004023",
+      "DWE-5002336",
+      "SQU-5002202",
+      "SQU-5004417",
+      "ZER-5000256",
+      "MAG-5003691",
+      "ZER-5002504"
+    ],
+    "violation_count": 5094,
+    "local_count": 6,
+    "api_minus_local": [
+      "100-5000001",
+      "100-5000002",
+      "100-5000004",
+      "100-5000009",
+      "100-5000016"
+    ],
+    "local_minus_api": []
+  },
+  {
+    "label": "sort_by=price asc (default)",
+    "params": {
+      "sort_by": "price"
+    },
+    "first5": [
+      -64640000,
+      -49920000,
+      -37710000,
+      -36020000,
+      -30560000
+    ],
+    "is_desc": false,
+    "is_asc": true
+  },
+  {
+    "label": "sort_by=price desc",
+    "params": {
+      "sort_by": "price",
+      "order": "desc"
+    },
+    "first5": [
+      -64640000,
+      -49920000,
+      -37710000,
+      -36020000,
+      -30560000
+    ],
+    "is_desc": false,
+    "is_asc": true
+  },
+  {
+    "label": "sort_by=carpet_area desc",
+    "params": {
+      "sort_by": "carpet_area",
+      "order": "desc"
+    },
+    "first5": [
+      31,
+      340,
+      32,
+      342,
+      32
+    ],
+    "is_desc": false,
+    "is_asc": false
+  },
+  {
+    "label": "sort_by=posted_at desc",
+    "params": {
+      "sort_by": "posted_at",
+      "order": "desc"
+    },
+    "first5": [
+      "2026-01-12T22:32:00Z",
+      "2026-01-13T14:53:00Z",
+      "2026-01-13T15:52:00Z",
+      "2026-01-13T02:38:00Z",
+      "2026-01-12T21:27:00Z"
+    ],
+    "is_desc": false,
+    "is_asc": false
+  },
+  {
+    "label": "sort_by=bedroom desc",
+    "params": {
+      "sort_by": "bedroom",
+      "order": "desc"
+    },
+    "first5": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "is_desc": true,
+    "is_asc": true
+  },
+  {
+    "label": "order=desc only (no sort_by)",
+    "params": {
+      "order": "desc"
+    },
+    "first5": [
+      "SQU-5004678",
+      "100-5003908",
+      "DWE-5004326",
+      "DWE-5003014",
+      "SQU-5004023"
+    ],
+    "is_desc": false,
+    "is_asc": false
+  }
+]
