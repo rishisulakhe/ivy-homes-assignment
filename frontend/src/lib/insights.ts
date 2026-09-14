@@ -3,7 +3,13 @@
  * does not exist. Every number here is derived from the full dataset with
  * the unit and quality corrections this project documented.
  */
-import { BAIT_NUMBERS, effectiveAreaSqft, isSqmMislabeled, corruptionReasons, duplicateKey } from "./quality";
+import {
+  BAIT_NUMBERS,
+  effectiveAreaSqft,
+  isSqmMislabeled,
+  corruptionReasons,
+  duplicateKey,
+} from "./quality";
 import type { Listing, Project } from "./types";
 import { median } from "./quality";
 
@@ -36,16 +42,12 @@ export function localityStats(listings: Listing[]): LocalityStat[] {
   }
   return Array.from(groups.entries())
     .map(([locality, rows]) => {
-      const honest = rows.filter(
-        (r) => r.price > 0 && !isSqmMislabeled(r) && r.carpet_area > 0,
-      );
+      const honest = rows.filter((r) => r.price > 0 && !isSqmMislabeled(r) && r.carpet_area > 0);
       return {
         locality,
         count: rows.length,
         medianPrice: median(rows.map((r) => r.price).filter((p) => p > 0)),
-        medianPsf: honest.length
-          ? median(honest.map((r) => r.price / effectiveAreaSqft(r)))
-          : 0,
+        medianPsf: honest.length ? median(honest.map((r) => r.price / effectiveAreaSqft(r))) : 0,
       };
     })
     .sort((a, b) => b.count - a.count);
@@ -117,7 +119,10 @@ export function qualitySummary(listings: Listing[], projects: Project[]): Qualit
       for (const r of reasons) reasonCounts.set(r, (reasonCounts.get(r) ?? 0) + 1);
     }
     if (l.posted_by_contact && BAIT_NUMBERS.has(l.posted_by_contact.trim())) {
-      baitCounts.set(l.posted_by_contact.trim(), (baitCounts.get(l.posted_by_contact.trim()) ?? 0) + 1);
+      baitCounts.set(
+        l.posted_by_contact.trim(),
+        (baitCounts.get(l.posted_by_contact.trim()) ?? 0) + 1,
+      );
     }
   }
 

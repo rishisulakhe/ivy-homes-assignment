@@ -17,9 +17,7 @@ export function EmptyState({
         {icon ?? <SearchX className="size-5" />}
       </div>
       <h3 className="text-lg font-semibold">{title}</h3>
-      {description && (
-        <p className="mt-2 max-w-md text-sm text-muted-foreground">{description}</p>
-      )}
+      {description && <p className="mt-2 max-w-md text-sm text-muted-foreground">{description}</p>}
       {action && <div className="mt-6">{action}</div>}
     </div>
   );
