@@ -78,7 +78,8 @@ function ProjectsPage() {
   }, [load]);
 
   const statuses = useMemo(
-    () => Array.from(new Set(all.map((p) => p.project_status).filter(Boolean))).sort(),
+    () =>
+      Array.from(new Set(all.map((p) => p.project_status).filter((s): s is string => !!s))).sort(),
     [all],
   );
 
@@ -89,7 +90,8 @@ function ProjectsPage() {
     const rows = all.filter((p) => {
       if (locality !== "all" && p.locality !== locality) return false;
       if (status !== "all" && p.project_status !== status) return false;
-      if (q && !`${p.apartment_name} ${p.developer_name ?? ""}`.toLowerCase().includes(q)) return false;
+      if (q && !`${p.apartment_name} ${p.developer_name ?? ""}`.toLowerCase().includes(q))
+        return false;
       return true;
     });
     const priceMaxOf = (p: Project) => (p.price_max ?? 0) * 1e7;
@@ -143,7 +145,9 @@ function ProjectsPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-xs uppercase tracking-wide text-muted-foreground">Locality</Label>
+            <Label className="text-xs uppercase tracking-wide text-muted-foreground">
+              Locality
+            </Label>
             <Select value={locality} onValueChange={setLocality}>
               <SelectTrigger className="w-full">
                 <SelectValue />

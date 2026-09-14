@@ -24,7 +24,8 @@ export const Route = createFileRoute("/rentals/")({
       { property: "og:title", content: "Homes for rent in Mumbai — Ivy Homes" },
       {
         property: "og:description",
-        content: "Browse rental homes across Mumbai with honest rent, deposit and maintenance figures.",
+        content:
+          "Browse rental homes across Mumbai with honest rent, deposit and maintenance figures.",
       },
     ],
   }),
@@ -47,7 +48,7 @@ let rentalsCache: Rental[] | null = null;
 function RentalsPage() {
   const [filters, setFilters] = useState<FilterState>(EMPTY_FILTERS);
   const [sort, setSort] = useState("price_asc");
-  const [all, setAll] = useState<Rental[]>(rentalsCache);
+  const [all, setAll] = useState<Rental[]>(rentalsCache ?? []);
   const [localities, setLocalities] = useState<Locality[]>([]);
   const [loading, setLoading] = useState(!rentalsCache);
   const [progress, setProgress] = useState(0);
