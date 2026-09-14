@@ -1,9 +1,11 @@
 # Ivy Homes Assignment — Mumbai (Malad West)
 
-Property API investigation + answers + documentation findings for the September 2026
-internship assignment. Frontend (Part 1) is being built separately; this repository
-currently contains the complete Part 2 (ten answers) and Part 3 (documentation lies)
-work, reproducible end to end.
+Property API investigation + answers + documentation findings + frontend for the
+September 2026 internship assignment.
+
+- **Part 1 (frontend)**: [`frontend/`](frontend/) — TanStack Start + React app; see its [README](frontend/README.md)
+- **Part 2 (ten answers)**: computed below, reproducible via `scripts/`
+- **Part 3 (documentation lies)**: 23 findings in `submission.json`
 
 - Base URL: `https://solve.ivy.homes`, key scoped to **mumbai**, assigned locality **malad west**
 - Reference moment: `2026-09-10T00:00:00+05:30`
@@ -159,6 +161,7 @@ the misses are as informative as the hits:
 ## Repository layout
 
 ```
+frontend/                 the web app (Part 1) — see frontend/README.md
 api-reference.md          the documentation under test
 statement.md              the assignment
 scripts/01..08_*.py       probe -> fetch -> analyze -> answer -> findings -> submission
