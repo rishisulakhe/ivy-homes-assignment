@@ -57,33 +57,11 @@ function LoginPage() {
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="relative hidden overflow-hidden lg:block">
         <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "linear-gradient(150deg, oklch(0.32 0.06 156), oklch(0.52 0.07 130) 55%, oklch(0.7 0.09 85))",
-          }}
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/bg.jpeg')" }}
         />
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(135deg, rgba(255,255,255,.3) 0 1px, transparent 1px 18px)",
-          }}
-        />
-        <svg
-          className="absolute bottom-0 left-0 h-1/2 w-full opacity-30"
-          viewBox="0 0 400 160"
-          preserveAspectRatio="none"
-        >
-          <g fill="rgba(255,255,255,.55)">
-            <rect x="10" y="80" width="60" height="80" />
-            <rect x="82" y="34" width="48" height="126" />
-            <rect x="142" y="96" width="74" height="64" />
-            <rect x="228" y="18" width="52" height="142" />
-            <rect x="292" y="70" width="42" height="90" />
-            <rect x="344" y="104" width="52" height="56" />
-          </g>
-        </svg>
+        <div className="absolute inset-0 bg-black/45" />
+        <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/70 to-transparent" />
         <div className="relative flex h-full flex-col justify-end p-12">
           <p className="font-display text-4xl font-semibold leading-tight text-white text-balance-tight">
             Mumbai's homes, read honestly.
