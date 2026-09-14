@@ -31,9 +31,13 @@ function SavedPage() {
     <div className="page-enter mx-auto max-w-7xl px-4 py-12 sm:px-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Your shortlist</p>
+          <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
+            Your shortlist
+          </p>
           <h1 className="mt-3 font-display text-4xl font-semibold">
-            {loading ? "Saved homes" : `${formatNumber(items.length)} saved ${items.length === 1 ? "home" : "homes"}`}
+            {loading
+              ? "Saved homes"
+              : `${formatNumber(items.length)} saved ${items.length === 1 ? "home" : "homes"}`}
           </h1>
           <p className="mt-2 max-w-lg text-sm text-muted-foreground">
             Shortlists are saved against your account and stay put across reloads and sign-ins.

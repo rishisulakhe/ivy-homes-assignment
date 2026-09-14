@@ -33,7 +33,12 @@ import {
 import { RequireAuth } from "@/components/RequireAuth";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { fetchAllListings, fetchAllProjects, readCachedDataset, writeCachedDataset } from "@/lib/data";
+import {
+  fetchAllListings,
+  fetchAllProjects,
+  readCachedDataset,
+  writeCachedDataset,
+} from "@/lib/data";
 import {
   countBy,
   localityStats,
@@ -112,7 +117,10 @@ function InsightsPage() {
 
   const stats = useMemo(() => qualitySummary(listings, projects), [listings, projects]);
   const byLocality = useMemo(() => localityStats(listings), [listings]);
-  const byBedroom = useMemo(() => countBy(listings, (l) => (l.bedroom === 0 ? "Plot" : `${l.bedroom} BHK`)), [listings]);
+  const byBedroom = useMemo(
+    () => countBy(listings, (l) => (l.bedroom === 0 ? "Plot" : `${l.bedroom} BHK`)),
+    [listings],
+  );
   const medianByBhk = useMemo(() => medianPriceByBhk(listings), [listings]);
   const psf = useMemo(() => psfHistogram(listings), [listings]);
 
@@ -160,17 +168,41 @@ function InsightsPage() {
             What 5,100 records actually say.
           </h1>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            The promised <code className="rounded bg-secondary px-1.5 py-0.5 text-xs">/v1/analytics/summary</code>{" "}
+            The promised{" "}
+            <code className="rounded bg-secondary px-1.5 py-0.5 text-xs">
+              /v1/analytics/summary
+            </code>{" "}
             endpoint doesn't exist, so every number here is computed locally from the complete
             dataset — with unit errors corrected and bait excluded where it would mislead.
-            {fromCache && " Served from your local cache; refetch happens automatically after 6 hours."}
+            {fromCache &&
+              " Served from your local cache; refetch happens automatically after 6 hours."}
           </p>
 
           <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-            <Kpi icon={<Database className="size-4" />} label="Records retrieved" value={formatNumber(stats.records)} />
-            <Kpi icon={<Home className="size-4" />} label="Distinct homes" value={formatNumber(stats.uniqueHomes)} hint={`${formatNumber(stats.duplicateRecords)} duplicate records collapsed`} />
-            <Kpi icon={<Eye className="size-4" />} label="Live now" value={formatNumber(stats.liveCount)} hint={`${formatNumber(stats.offlineCount)} offline`} />
-            <Kpi icon={<ShieldAlert className="size-4" />} label="Flagged records" value={formatNumber(stats.corruptCount + stats.baitCount)} hint={`${stats.corruptCount} corrupt · ${stats.baitCount} bait`} tone="warn" />
+            <Kpi
+              icon={<Database className="size-4" />}
+              label="Records retrieved"
+              value={formatNumber(stats.records)}
+            />
+            <Kpi
+              icon={<Home className="size-4" />}
+              label="Distinct homes"
+              value={formatNumber(stats.uniqueHomes)}
+              hint={`${formatNumber(stats.duplicateRecords)} duplicate records collapsed`}
+            />
+            <Kpi
+              icon={<Eye className="size-4" />}
+              label="Live now"
+              value={formatNumber(stats.liveCount)}
+              hint={`${formatNumber(stats.offlineCount)} offline`}
+            />
+            <Kpi
+              icon={<ShieldAlert className="size-4" />}
+              label="Flagged records"
+              value={formatNumber(stats.corruptCount + stats.baitCount)}
+              hint={`${stats.corruptCount} corrupt · ${stats.baitCount} bait`}
+              tone="warn"
+            />
           </div>
         </div>
       </section>
@@ -224,7 +256,10 @@ function InsightsPage() {
             </ResponsiveContainer>
           </ChartCard>
 
-          <ChartCard title="Median price by configuration" subtitle="Corrupt prices (₹0/negative) excluded">
+          <ChartCard
+            title="Median price by configuration"
+            subtitle="Corrupt prices (₹0/negative) excluded"
+          >
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={medianByBhk} margin={{ top: 8, right: 8, left: -6, bottom: 24 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.9 0.012 110)" />
@@ -237,7 +272,12 @@ function InsightsPage() {
                   formatter={(v: number) => [formatINR(v), "Median price"]}
                   contentStyle={{ borderRadius: 12, border: "1px solid oklch(0.9 0.012 110)" }}
                 />
-                <Bar dataKey="count" name="Median price" fill={CHART_COLORS[1]} radius={[6, 6, 0, 0]} />
+                <Bar
+                  dataKey="count"
+                  name="Median price"
+                  fill={CHART_COLORS[1]}
+                  radius={[6, 6, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </ChartCard>
@@ -283,10 +323,10 @@ function InsightsPage() {
               title={`${formatNumber(stats.duplicateRecords)} records are re-listings`}
               body={
                 <>
-                  {formatNumber(stats.records)} records describe{" "}
-                  {formatNumber(stats.uniqueHomes)} distinct homes. The same flat appears on
-                  multiple portals with jittered prices, areas and coordinates — counts and
-                  "homes for sale" widgets that trust the raw feed overstate supply by{" "}
+                  {formatNumber(stats.records)} records describe {formatNumber(stats.uniqueHomes)}{" "}
+                  distinct homes. The same flat appears on multiple portals with jittered prices,
+                  areas and coordinates — counts and "homes for sale" widgets that trust the raw
+                  feed overstate supply by{" "}
                   {Math.round((stats.duplicateRecords / stats.records) * 100)}%.
                 </>
               }
@@ -313,9 +353,9 @@ function InsightsPage() {
                 <>
                   One portal reports carpet areas in square metres while every other field claims
                   square feet. Read as-is they price at ₹{formatNumber(stats.sqmMedianPsfRaw)}/sqft;
-                  converted (×10.7639) they land at ₹
-                  {formatNumber(stats.sqmMedianPsfCorrected)}/sqft — squarely in the market band.
-                  We display corrected areas on every affected home.
+                  converted (×10.7639) they land at ₹{formatNumber(stats.sqmMedianPsfCorrected)}
+                  /sqft — squarely in the market band. We display corrected areas on every affected
+                  home.
                 </>
               }
             />
@@ -356,7 +396,11 @@ function InsightsPage() {
                     ))}
                   </ul>
                   <p className="mt-3 text-xs text-muted-foreground">
-                    Samples: {stats.corruptSamples.slice(0, 5).map((s) => s.id).join(", ")}
+                    Samples:{" "}
+                    {stats.corruptSamples
+                      .slice(0, 5)
+                      .map((s) => s.id)
+                      .join(", ")}
                   </p>
                 </>
               }

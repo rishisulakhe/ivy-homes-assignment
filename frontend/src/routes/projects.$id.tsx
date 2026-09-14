@@ -137,8 +137,10 @@ function ProjectDetail() {
   }
 
   // Price fields are crores; some projects have min/max swapped in the source.
-  const min = project.price_min !== undefined && project.price_min !== null ? project.price_min * 1e7 : null;
-  const max = project.price_max !== undefined && project.price_max !== null ? project.price_max * 1e7 : null;
+  const min =
+    project.price_min !== undefined && project.price_min !== null ? project.price_min * 1e7 : null;
+  const max =
+    project.price_max !== undefined && project.price_max !== null ? project.price_max * 1e7 : null;
   const swapped = min !== null && max !== null && min > max;
   const lo = swapped ? max : min;
   const hi = swapped ? min : max;
@@ -157,7 +159,10 @@ function ProjectDetail() {
         <ArrowLeft className="size-4" /> Back to projects
       </Link>
 
-      <PropertyMedia seed={project.project_id} className="h-[300px] w-full rounded-3xl sm:h-[400px]">
+      <PropertyMedia
+        seed={project.project_id}
+        className="h-[300px] w-full rounded-3xl sm:h-[400px]"
+      >
         <div className="absolute left-6 top-6 flex flex-wrap gap-2">
           <Chip tone="primary">{titleCase(project.project_status)}</Chip>
           {swapped && <Chip tone="warning">Price range reversed in source</Chip>}
@@ -181,14 +186,30 @@ function ProjectDetail() {
               {hi !== null ? ` – ${formatINR(hi)}` : ""}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Converted from {project.price_min ?? "—"}–{project.price_max ?? "—"} Cr as published by
-              the source.
+              Converted from {project.price_min ?? "—"}–{project.price_max ?? "—"} Cr as published
+              by the source.
             </p>
 
             <div className="mt-6 grid grid-cols-2 gap-4 border-t border-border pt-6 sm:grid-cols-4">
-              <Fact icon={<Building2 className="size-4" />} label="Developer" value={project.developer_name ?? "—"} />
-              <Fact icon={<Users className="size-4" />} label="Total units" value={project.total_units !== undefined ? formatNumber(project.total_units) : "—"} />
-              <Fact icon={<Layers className="size-4" />} label="Towers × floors" value={project.total_towers !== undefined && project.total_floors !== undefined ? `${project.total_towers} × ${project.total_floors}` : "—"} />
+              <Fact
+                icon={<Building2 className="size-4" />}
+                label="Developer"
+                value={project.developer_name ?? "—"}
+              />
+              <Fact
+                icon={<Users className="size-4" />}
+                label="Total units"
+                value={project.total_units !== undefined ? formatNumber(project.total_units) : "—"}
+              />
+              <Fact
+                icon={<Layers className="size-4" />}
+                label="Towers × floors"
+                value={
+                  project.total_towers !== undefined && project.total_floors !== undefined
+                    ? `${project.total_towers} × ${project.total_floors}`
+                    : "—"
+                }
+              />
               <Fact
                 icon={<Maximize className="size-4" />}
                 label="Unit sizes"
@@ -198,10 +219,26 @@ function ProjectDetail() {
                     : "—"
                 }
               />
-              <Fact icon={<CalendarDays className="size-4" />} label="Launched" value={formatDate(project.launch_date)} />
-              <Fact icon={<CalendarDays className="size-4" />} label="Possession" value={formatDate(project.possession_date)} />
-              <Fact icon={<Hash className="size-4" />} label="RERA" value={project.rera_number ?? "—"} />
-              <Fact icon={<ShieldCheck className="size-4" />} label="Status" value={titleCase(project.project_status)} />
+              <Fact
+                icon={<CalendarDays className="size-4" />}
+                label="Launched"
+                value={formatDate(project.launch_date)}
+              />
+              <Fact
+                icon={<CalendarDays className="size-4" />}
+                label="Possession"
+                value={formatDate(project.possession_date)}
+              />
+              <Fact
+                icon={<Hash className="size-4" />}
+                label="RERA"
+                value={project.rera_number ?? "—"}
+              />
+              <Fact
+                icon={<ShieldCheck className="size-4" />}
+                label="Status"
+                value={titleCase(project.project_status)}
+              />
             </div>
 
             {project.amenities && project.amenities.length > 0 && (
@@ -217,7 +254,11 @@ function ProjectDetail() {
 
           <div className="rounded-2xl border border-border bg-card p-6">
             <h2 className="text-lg font-semibold">Location</h2>
-            <MapPlaceholder lat={project.latitude} lng={project.longitude} label={titleCase(project.locality)} />
+            <MapPlaceholder
+              lat={project.latitude}
+              lng={project.longitude}
+              label={titleCase(project.locality)}
+            />
           </div>
         </div>
 
@@ -285,15 +326,7 @@ function ProjectDetail() {
   );
 }
 
-function Fact({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
+function Fact({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div>
       <p className="flex items-center gap-1.5 text-xs uppercase tracking-wide text-muted-foreground">

@@ -23,7 +23,14 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchRental, fetchRentals } from "@/lib/data";
 import { ApiError } from "@/lib/api";
-import { formatDate, formatINR, formatINRFull, formatNumber, formatPhone, titleCase } from "@/lib/format";
+import {
+  formatDate,
+  formatINR,
+  formatINRFull,
+  formatNumber,
+  formatPhone,
+  titleCase,
+} from "@/lib/format";
 import type { Rental } from "@/lib/types";
 import { MapPlaceholder } from "./listings.$id";
 
@@ -68,7 +75,9 @@ function RentalDetail() {
           const lo = r.price * 0.7;
           const hi = r.price * 1.3;
           setSimilar(
-            page.results.filter((s) => s.listing_id !== r.listing_id && s.price >= lo && s.price <= hi).slice(0, 6),
+            page.results
+              .filter((s) => s.listing_id !== r.listing_id && s.price >= lo && s.price <= hi)
+              .slice(0, 6),
           );
         });
       })
@@ -165,13 +174,17 @@ function RentalDetail() {
             </p>
             {rental.maintenance ? (
               <p className="mt-4 rounded-xl bg-secondary p-4 text-sm">
-                Effective monthly outgo: <strong>{formatINRFull(monthly)}</strong> (rent + maintenance),
-                plus a one-time refundable deposit of {formatINRFull(rental.deposit)}.
+                Effective monthly outgo: <strong>{formatINRFull(monthly)}</strong> (rent +
+                maintenance), plus a one-time refundable deposit of {formatINRFull(rental.deposit)}.
               </p>
             ) : null}
 
             <div className="mt-6 grid grid-cols-2 gap-4 border-t border-border pt-6 sm:grid-cols-4">
-              <Fact icon={<BedDouble className="size-4" />} label="Bedrooms" value={`${rental.bedroom} BHK`} />
+              <Fact
+                icon={<BedDouble className="size-4" />}
+                label="Bedrooms"
+                value={`${rental.bedroom} BHK`}
+              />
               <Fact
                 icon={<Bath className="size-4" />}
                 label="Bathrooms"
@@ -191,13 +204,21 @@ function RentalDetail() {
                     : "—"
                 }
               />
-              <Fact icon={<Compass className="size-4" />} label="Facing" value={titleCase(rental.facing_direction)} />
+              <Fact
+                icon={<Compass className="size-4" />}
+                label="Facing"
+                value={titleCase(rental.facing_direction)}
+              />
               <Fact
                 icon={<Building2 className="size-4" />}
                 label="Type"
                 value={titleCase(rental.property_type)}
               />
-              <Fact icon={<Wallet className="size-4" />} label="Furnishing" value={titleCase(rental.furnishing)} />
+              <Fact
+                icon={<Wallet className="size-4" />}
+                label="Furnishing"
+                value={titleCase(rental.furnishing)}
+              />
               <Fact
                 icon={<CalendarDays className="size-4" />}
                 label="Available since"
@@ -215,7 +236,11 @@ function RentalDetail() {
 
           <div className="rounded-2xl border border-border bg-card p-6">
             <h2 className="text-lg font-semibold">Location</h2>
-            <MapPlaceholder lat={rental.latitude} lng={rental.longitude} label={titleCase(rental.locality)} />
+            <MapPlaceholder
+              lat={rental.latitude}
+              lng={rental.longitude}
+              label={titleCase(rental.locality)}
+            />
           </div>
         </div>
 
@@ -272,15 +297,7 @@ function RentalDetail() {
   );
 }
 
-function Fact({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
+function Fact({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div>
       <p className="flex items-center gap-1.5 text-xs uppercase tracking-wide text-muted-foreground">
